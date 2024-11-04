@@ -11,51 +11,33 @@ on:
 jobs:
 
   build:
-
     strategy:
       matrix:
-        configuration: [Debug, Release]
-
+        configuration: [Release]
     runs-on: windows-latest
 
     env:
       Solution_Name: Source/Apskaita5vNext.sln
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
+      - name: Restore NuGet packages
+        run: dotnet restore $env:Solution_Name
 
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+      - name: Build the application
+        run: msbuild $env:Solution_Name /p:Configuration=Release
 
-    - name: Build the application
-      run: msbuild $env:Solution_Name /p:Configuration=${{ matrix.configuration }}
-
-    - name: Archive build output
-      if: ${{ matrix.configuration == 'Release' }}
-      run: |
-        mkdir -p output
-        cp -r Source/bin/Release/* output/
-      env:
-        Configuration: Release
-
-    - name: Upload Release Asset
-      if: github.event_name == 'release' && github.event.action == 'created'
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./output
-        asset_name: Apskaita5vNext_${{ matrix.configuration }}.zip
-        asset_content_type: application/zip
+      - name: Archive build output
+        if: ${{ matrix.configuration == 'Release' }}
+        run: |
+          mkdir -p output
+          cp -r Source/bin/Release/* output/
