@@ -36,9 +36,6 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore $env:Solution_Name
 
-      - name: Restore NuGet packages
-        run: nuget restore
-
       - name: Build the application
         run: msbuild $env:Solution_Name /p:Configuration=Release
 
