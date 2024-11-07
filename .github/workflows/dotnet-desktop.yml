@@ -43,4 +43,4 @@ jobs:
         if: ${{ matrix.configuration == 'Release' }}
         run: |
           mkdir -p output
-          cp -r Source/bin/Release/* output/
+          cp -r Source/DevUtils/bin/Release/* output/
