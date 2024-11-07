@@ -37,7 +37,7 @@ jobs:
         run: dotnet restore $env:Solution_Name
 
       - name: Build the application
-        run: msbuild $env:Solution_Name /p:Configuration=Release
+        run: msbuild $env:Solution_Name /p:Configuration=Release  /v:diag
 
       - name: Archive build output
         if: ${{ matrix.configuration == 'Release' }}
